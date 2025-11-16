@@ -33,7 +33,7 @@ urlpatterns = [
     path("checkout/", views.checkout, name="checkout"),
     path("success/", views.success, name="success"),
     # API (DRF)
-    path('api/', include((shop_api.api_urls, 'shop'), namespace='api')),
+    path('api/', include(shop_api.urlpatterns)),
     # Health check endpoint for deployment
     path("healthz/", health_check),
     path("healthz", health_check),
