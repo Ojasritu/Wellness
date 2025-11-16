@@ -6,7 +6,8 @@ const AyurvedicChatbot = () => {
     {
       id: 1,
       type: 'bot',
-      content: 'नमस्ते! 🙏 Ojasritu Wellness में आपका स्वागत है। मैं एक AI-संचालित आयुर्वेद विशेषज्ञ हूँ। क्या आप अपने स्वास्थ्य के बारे में कुछ जानना चाहते हैं?',
+      content: 'नमस्ते! 🙏 Ojasritu Wellness में आपका स्वागत है। मैं एक AI-संचालित आयुर्वेद विशेषज्ञ हूँ।',
+      slok: '॥ समदोषः समाग्निश्च समधातुमलक्रियः। प्रसन्नात्मेन्द्रियमनः स्वस्थ इति अभिधीयते ॥',
       timestamp: new Date()
     }
   ]);
@@ -38,7 +39,7 @@ const AyurvedicChatbot = () => {
       timestamp: new Date()
     };
 
-    setMessages([...messages, userMessage]);
+    setMessages(prev => [...prev, userMessage]);
     setInput('');
     setLoading(true);
 
@@ -70,7 +71,8 @@ const AyurvedicChatbot = () => {
           type: 'bot',
           content: data.message,
           timestamp: new Date(),
-          isResponse: true
+          isResponse: true,
+          slok: data.slok
         };
         setMessages(prev => [...prev, botMessage]);
       } else {
@@ -81,7 +83,9 @@ const AyurvedicChatbot = () => {
       const errorMessage = {
         id: messages.length + 2,
         type: 'bot',
-        content: 'क्षमा करें, एक त्रुटि हुई। कृपया पुनः प्रयास करें। / Sorry, an error occurred. Please try again.',
+        content: language === 'hi' 
+          ? '⚠️ कृपया दोबारा कोशिश करें।' 
+          : '⚠️ Please try again.',
         timestamp: new Date(),
         isError: true
       };
@@ -92,10 +96,10 @@ const AyurvedicChatbot = () => {
   };
 
   const quickActions = [
-    { label: 'दोष विश्लेषण', value: 'dosha' },
-    { label: 'आयुर्वेद टिप्स', value: 'tips' },
-    { label: 'उत्पाद सुझाव', value: 'products' },
-    { label: 'परामर्श बुक करें', value: 'booking' }
+    { label: language === 'hi' ? 'दोष विश्लेषण' : 'Dosha Analysis', value: 'dosha', emoji: '🧘' },
+    { label: language === 'hi' ? 'आयुर्वेद टिप्स' : 'Ayurveda Tips', value: 'tips', emoji: '🌿' },
+    { label: language === 'hi' ? 'उत्पाद सुझाव' : 'Product Tips', value: 'products', emoji: '💊' },
+    { label: language === 'hi' ? 'परामर्श' : 'Consultation', value: 'booking', emoji: '📅' }
   ];
 
   const getCookie = (name) => {
@@ -172,6 +176,11 @@ const AyurvedicChatbot = () => {
                 </div>
                 <div className="message-content">
                   <p>{message.content}</p>
+                  {message.slok && (
+                    <div className="slok-display">
+                      <p className="slok-text">{message.slok}</p>
+                    </div>
+                  )}
                   <span className="message-time">
                     {new Date(message.timestamp).toLocaleTimeString('en-US', {
                       hour: '2-digit',
@@ -202,13 +211,14 @@ const AyurvedicChatbot = () => {
                   key={action.value}
                   className="quick-action-btn"
                   onClick={() => {
-                    setInput(action.label);
+                    setInput(`${action.emoji} ${action.label}`);
                     setTimeout(() => {
                       document.querySelector('.chatbot-send-btn')?.click();
                     }, 100);
                   }}
+                  title={action.label}
                 >
-                  {action.label}
+                  {action.emoji}
                 </button>
               ))}
             </div>
@@ -223,6 +233,7 @@ const AyurvedicChatbot = () => {
               placeholder={language === 'hi' ? 'अपना सवाल पूछें...' : 'Ask your question...'}
               disabled={loading}
               className="chatbot-input"
+              autoComplete="off"
             />
             <button
               type="submit"
@@ -237,8 +248,8 @@ const AyurvedicChatbot = () => {
           <div className="chatbot-footer">
             <p className="footer-disclaimer">
               {language === 'hi'
-                ? '⚠️ यह किसी चिकित्सीय सलाह का विकल्प नहीं है।'
-                : '⚠️ This is not a substitute for medical advice.'}
+                ? '⚠️ यह चिकित्सा सलाह का विकल्प नहीं है।'
+                : '⚠️ Not a medical advice substitute.'}
             </p>
           </div>
         </div>

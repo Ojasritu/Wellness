@@ -6,7 +6,7 @@ from django.http import JsonResponse
 from django.utils import timezone
 from shop import views
 from shop import api as shop_api
-from shop import chatbot
+from shop import chatbot_improved as chatbot
 
 def health_check(request):
     """Health check endpoint that returns basic application status."""
