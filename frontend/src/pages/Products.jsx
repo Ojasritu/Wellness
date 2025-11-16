@@ -1,16 +1,3 @@
-
-function Products() {
-  return (
-    <div>
-      <h1>Our Products</h1>
-      <div className="products-grid">
-        {/* Products will be loaded from the API */}
-      </div>
-    </div>
-  )
-}
-
-export default Products
 import React, { useState, useEffect } from 'react'
 import ProductCard from '../components/ProductCard'
 import './Products.css'
