@@ -11,7 +11,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 # ✅ Security
 SECRET_KEY = os.getenv('SECRET_KEY', 'django-insecure-please-change-this-in-production')
-DEBUG = os.getenv('DEBUG', 'False') == 'True'
+DEBUG = os.getenv('DEBUG', 'True') == 'True'  # Default to True for development
 
 # Allow configuring ALLOWED_HOSTS via environment variable (comma-separated).
 # Example: ALLOWED_HOSTS=ojasritu.co.in,www.ojasritu.co.in
@@ -75,6 +75,18 @@ CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
     "http://localhost:5173",
 ]
+
+# ✅ CSRF Configuration for local development
+if DEBUG:
+    CSRF_TRUSTED_ORIGINS = [
+        "http://localhost:8000",
+        "http://127.0.0.1:8000",
+        "http://localhost:5173",
+        "http://127.0.0.1:5173",
+    ]
+    CSRF_COOKIE_HTTPONLY = False  # Allow JavaScript to access CSRF token in development
+else:
+    CSRF_TRUSTED_ORIGINS = os.getenv('CSRF_TRUSTED_ORIGINS', '').split(',') if os.getenv('CSRF_TRUSTED_ORIGINS') else []
 
 # ✅ Root URLs & WSGI
 ROOT_URLCONF = "wellness_project.urls"
