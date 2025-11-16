@@ -1,6 +1,7 @@
 import React from 'react'
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
 import Layout from './components/Layout'
+import AyurvedicChatbot from './components/AyurvedicChatbot'
 import Home from './pages/Home'
 import Products from './pages/Products'
 import Contact from './pages/Contact'
@@ -32,6 +33,7 @@ function App() {
           <Route path="/wellness" element={<Wellness />} />
           <Route path="/acharyas" element={<Acharyas />} />
         </Routes>
+        <AyurvedicChatbot />
       </Layout>
     </Router>
   )

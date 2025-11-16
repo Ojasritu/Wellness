@@ -6,6 +6,7 @@ from django.http import JsonResponse
 from django.utils import timezone
 from shop import views
 from shop import api as shop_api
+from shop import chatbot
 
 def health_check(request):
     """Health check endpoint that returns basic application status."""
@@ -34,6 +35,10 @@ urlpatterns = [
     path("success/", views.success, name="success"),
     # API (DRF)
     path('api/', include(shop_api.urlpatterns)),
+    # Chatbot API
+    path('api/chat/', chatbot.chat_with_ayurveda_ai, name='chat'),
+    path('api/dosha-analyzer/', chatbot.dosha_analyzer, name='dosha_analyzer'),
+    path('api/ayurveda-tips/', chatbot.get_ayurveda_tips, name='ayurveda_tips'),
     # Health check endpoint for deployment
     path("healthz/", health_check),
     path("healthz", health_check),
