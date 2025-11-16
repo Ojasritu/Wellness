@@ -1,0 +1,58 @@
+:root {
+  --primary-color: #5568d3;
+  --secondary-color: #071022;
+  --text-light: #eee;
+}
+
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background: var(--secondary-color);
+  color: var(--text-light);
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 1rem;
+}
+
+a {
+  color: var(--primary-color);
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+.navbar { background: #0b1520; padding: 0.8rem 0; border-bottom: 1px solid rgba(255,255,255,0.03); }
+.navbar .container { display:flex; align-items:center; justify-content:space-between }
+.nav-links a { margin-right: 1rem; color: #ddd }
+.nav-actions { display:flex; gap:0.5rem; align-items:center }
+.btn { background: var(--primary-color); color: white; padding: 0.4rem 0.8rem; border-radius:6px }
+.hero { padding: 2rem 0 }
+.hero-inner { display:flex; gap:2rem; align-items:center }
+.hero-anim { width:420px }
+.video-gallery { margin-top: 2rem }
+.vg-body { display:flex; gap:1rem }
+.vg-list { display:flex; flex-direction:column; gap:0.5rem; min-width:200px }
+.chatbot { position:fixed; right:1rem; bottom:1rem }
+.chat-toggle { background:var(--primary-color); color:white; padding:0.6rem 1rem; border-radius:999px }
+.chat-window { width:320px; max-height:480px; background:#fff; color:#000; border-radius:8px; overflow:hidden; display:flex; flex-direction:column }
+.chat-messages { padding:0.6rem; flex:1; overflow:auto }
+.chat-input { display:flex; gap:0.5rem; padding:0.6rem }
+.msg.bot { background:#f1f1f1; padding:0.4rem 0.6rem; border-radius:6px; margin-bottom:0.4rem }
+.msg.user { text-align:right; margin-bottom:0.4rem }
+.container.product-detail .actions { display:flex; gap:1rem }
+.price { font-weight:700; color:var(--primary-color) }
+
+@media (max-width:800px) {
+  .hero-inner { flex-direction:column }
+  .hero-anim { width:100% }
+  .vg-body { flex-direction:column }
+}

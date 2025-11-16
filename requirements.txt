@@ -1,0 +1,16 @@
+
+Django>=4.2
+Pillow
+stripe
+gunicorn
+whitenoise
+dj-database-url
+psycopg2-binary
+python-dotenv
+django-cors-headers
+social-auth-app-django
+django-allauth
+razorpay
+django-browser-reload
+djangorestframework
+djangorestframework-simplejwt
