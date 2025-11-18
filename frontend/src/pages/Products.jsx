@@ -1,229 +1,153 @@
-import React, { useState, useEffect } from 'react'
-import ProductCard from '../components/ProductCard'
+import React, { useState, useMemo } from 'react'
 import './Products.css'
 
-function Products() {
-  const [products, setProducts] = useState([])
-  const [categories, setCategories] = useState([])
-  const [loading, setLoading] = useState(true)
-  const [selectedCategory, setSelectedCategory] = useState(null)
-  const [selectedDosha, setSelectedDosha] = useState(null)
-  const [sortBy, setSortBy] = useState('popular')
-  const [searchQuery, setSearchQuery] = useState('')
+const Products = () => {
+  const [selectedCategory, setSelectedCategory] = useState('all')
+  const [selectedDosha, setSelectedDosha] = useState('all')
+  const [searchTerm, setSearchTerm] = useState('')
+  const [sortBy, setSortBy] = useState('featured')
 
-  useEffect(() => {
-    fetchCategories()
-    fetchProducts()
-  }, [selectedCategory, selectedDosha, sortBy, searchQuery])
-
-  const fetchCategories = async () => {
-    try {
-      const response = await fetch('http://localhost:8000/api/categories/', {
-        credentials: 'include',
-      })
-      const data = await response.json()
-      if (data.results) {
-        setCategories(data.results)
-      }
-    } catch (error) {
-      console.error('Error fetching categories:', error)
-    }
-  }
-
-  const fetchProducts = async () => {
-    setLoading(true)
-    try {
-      let url = 'http://localhost:8000/api/products/?'
-      
-      if (selectedCategory) {
-        url += `category=${selectedCategory}&`
-      }
-      if (selectedDosha) {
-        url += `dosha_type=${selectedDosha}&`
-      }
-      if (searchQuery) {
-        url += `search=${searchQuery}&`
-      }
-      
-      url += `ordering=${sortBy === 'price-low' ? 'price' : sortBy === 'price-high' ? '-price' : '-created_at'}`
-
-      const response = await fetch(url, {
-        credentials: 'include',
-      })
-      const data = await response.json()
-      setProducts(data.results || [])
-    } catch (error) {
-      console.error('Error fetching products:', error)
-    } finally {
-      setLoading(false)
-    }
-  }
-
-  const doshas = [
-    { value: 'vata', label: 'वात / Vata', color: '#00d4ff' },
-    { value: 'pitta', label: 'पित्त / Pitta', color: '#ff6b6b' },
-    { value: 'kapha', label: 'कफ / Kapha', color: '#51cf66' },
+  // Sample product data (in production, this comes from API)
+  const allProducts = [
+    { id: 1, name: 'Ashwagandha Root Powder', category: 'supplements', dosha: 'vata', price: 299, rating: 4.8, image: '🌿' },
+    { id: 2, name: 'Brahmi Oil', category: 'oils', dosha: 'pitta', price: 450, rating: 4.6, image: '🧴' },
+    { id: 3, name: 'Neem Face Mask', category: 'skincare', dosha: 'pitta', price: 199, rating: 4.7, image: '💆' },
+    { id: 4, name: 'Sesame Oil', category: 'oils', dosha: 'vata', price: 350, rating: 4.9, image: '🧴' },
+    { id: 5, name: 'Triphala Powder', category: 'supplements', dosha: 'all', price: 249, rating: 4.8, image: '🌿' },
+    { id: 6, name: 'Tulsi Tea', category: 'tea', dosha: 'all', price: 150, rating: 4.7, image: '🍵' },
+    { id: 7, name: 'Brahmi Tea', category: 'tea', dosha: 'pitta', price: 140, rating: 4.6, image: '🍵' },
+    { id: 8, name: 'Coconut Oil', category: 'oils', dosha: 'pitta', price: 320, rating: 4.8, image: '🧴' },
   ]
+
+  // Filter and sort products
+  const filteredProducts = useMemo(() => {
+    let filtered = allProducts.filter(product => {
+      const categoryMatch = selectedCategory === 'all' || product.category === selectedCategory
+      const doshaMatch = selectedDosha === 'all' || product.dosha === selectedDosha || product.dosha === 'all'
+      const searchMatch = searchTerm === '' || product.name.toLowerCase().includes(searchTerm.toLowerCase())
+      return categoryMatch && doshaMatch && searchMatch
+    })
+
+    // Sort
+    if (sortBy === 'price-low') {
+      filtered.sort((a, b) => a.price - b.price)
+    } else if (sortBy === 'price-high') {
+      filtered.sort((a, b) => b.price - a.price)
+    } else if (sortBy === 'rating') {
+      filtered.sort((a, b) => b.rating - a.rating)
+    }
+
+    return filtered
+  }, [selectedCategory, selectedDosha, searchTerm, sortBy])
 
   return (
     <div className="products-page">
-      {/* Hero Section */}
-      <div className="products-hero">
-        <h1 className="products-title">🌿 आयुर्वेदिक उत्पाद / Ayurvedic Products</h1>
-        <p className="products-subtitle">
-          प्राकृतिक, शुद्ध और प्राचीन विज्ञान से निर्मित उत्पाद
-        </p>
+      {/* Header */}
+      <div className="products-header">
+        <div className="container">
+          <h1>Our Wellness Products</h1>
+          <p>Handpicked Ayurvedic remedies for your complete wellness journey</p>
+        </div>
       </div>
 
-      <div className="products-container">
-        {/* Sidebar Filters */}
+      <div className="container products-content">
+        {/* Filters Sidebar */}
         <aside className="filters-sidebar">
-          <div className="filter-section">
-            <h3 className="filter-title">🔍 Search</h3>
+          <div className="filter-group">
+            <h3>Search</h3>
             <input
               type="text"
               placeholder="Search products..."
               className="search-input"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
             />
           </div>
 
-          {/* Category Filter */}
-          <div className="filter-section">
-            <h3 className="filter-title">📂 Category</h3>
+          <div className="filter-group">
+            <h3>Category</h3>
             <div className="filter-options">
-              <button
-                className={`filter-option ${!selectedCategory ? 'active' : ''}`}
-                onClick={() => setSelectedCategory(null)}
-              >
+              <label>
+                <input type="radio" name="category" value="all" checked={selectedCategory === 'all'} onChange={(e) => setSelectedCategory(e.target.value)} />
                 All Products
-              </button>
-              {categories.map((cat) => (
-                <button
-                  key={cat.id}
-                  className={`filter-option ${selectedCategory === cat.id ? 'active' : ''}`}
-                  onClick={() => setSelectedCategory(cat.id)}
-                >
-                  {cat.name}
-                </button>
-              ))}
+              </label>
+              <label>
+                <input type="radio" name="category" value="supplements" checked={selectedCategory === 'supplements'} onChange={(e) => setSelectedCategory(e.target.value)} />
+                Supplements
+              </label>
+              <label>
+                <input type="radio" name="category" value="oils" checked={selectedCategory === 'oils'} onChange={(e) => setSelectedCategory(e.target.value)} />
+                Oils
+              </label>
+              <label>
+                <input type="radio" name="category" value="skincare" checked={selectedCategory === 'skincare'} onChange={(e) => setSelectedCategory(e.target.value)} />
+                Skincare
+              </label>
+              <label>
+                <input type="radio" name="category" value="tea" checked={selectedCategory === 'tea'} onChange={(e) => setSelectedCategory(e.target.value)} />
+                Herbal Teas
+              </label>
             </div>
           </div>
 
-          {/* Dosha Filter */}
-          <div className="filter-section">
-            <h3 className="filter-title">🧘 Dosha Type</h3>
-            <div className="dosha-filter">
-              <button
-                className={`dosha-filter-btn ${!selectedDosha ? 'active' : ''}`}
-                onClick={() => setSelectedDosha(null)}
-              >
+          <div className="filter-group">
+            <h3>Dosha</h3>
+            <div className="filter-options">
+              <label>
+                <input type="radio" name="dosha" value="all" checked={selectedDosha === 'all'} onChange={(e) => setSelectedDosha(e.target.value)} />
                 All Doshas
-              </button>
-              {doshas.map((dosha) => (
-                <button
-                  key={dosha.value}
-                  className={`dosha-filter-btn ${selectedDosha === dosha.value ? 'active' : ''}`}
-                  onClick={() => setSelectedDosha(dosha.value)}
-                  style={{
-                    borderColor: selectedDosha === dosha.value ? dosha.color : 'rgba(212, 175, 55, 0.2)',
-                  }}
-                >
-                  {dosha.label}
-                </button>
-              ))}
+              </label>
+              <label>
+                <input type="radio" name="dosha" value="vata" checked={selectedDosha === 'vata'} onChange={(e) => setSelectedDosha(e.target.value)} />
+                Vata 🌬️
+              </label>
+              <label>
+                <input type="radio" name="dosha" value="pitta" checked={selectedDosha === 'pitta'} onChange={(e) => setSelectedDosha(e.target.value)} />
+                Pitta 🔥
+              </label>
             </div>
           </div>
 
-          {/* Sort Filter */}
-          <div className="filter-section">
-            <h3 className="filter-title">↕️ Sort By</h3>
-            <select
-              className="sort-select"
-              value={sortBy}
-              onChange={(e) => setSortBy(e.target.value)}
-            >
-              <option value="popular">Most Popular</option>
-              <option value="newest">Newest First</option>
+          <div className="filter-group">
+            <h3>Sort By</h3>
+            <select className="sort-select" value={sortBy} onChange={(e) => setSortBy(e.target.value)}>
+              <option value="featured">Featured</option>
               <option value="price-low">Price: Low to High</option>
               <option value="price-high">Price: High to Low</option>
+              <option value="rating">Highest Rated</option>
             </select>
           </div>
-
-          {/* Clear Filters */}
-          <button
-            className="clear-filters-btn"
-            onClick={() => {
-              setSelectedCategory(null)
-              setSelectedDosha(null)
-              setSearchQuery('')
-              setSortBy('popular')
-            }}
-          >
-            ✕ Clear All Filters
-          </button>
         </aside>
 
         {/* Products Grid */}
-        <main className="products-main">
-          {/* Results Info */}
-          <div className="results-info">
-            <p className="results-count">
-              Showing <strong>{products.length}</strong> product{products.length !== 1 ? 's' : ''}
-            </p>
+        <div className="products-section">
+          <div className="products-info">
+            <p>{filteredProducts.length} products found</p>
           </div>
 
-          {loading ? (
-            <div className="loading-state">
-              <div className="spinner"></div>
-              <p>Loading products...</p>
-            </div>
-          ) : products.length > 0 ? (
+          {filteredProducts.length > 0 ? (
             <div className="products-grid">
-              {products.map((product) => (
-                <ProductCard key={product.id} product={product} />
+              {filteredProducts.map(product => (
+                <div key={product.id} className="product-card">
+                  <div className="product-image">{product.image}</div>
+                  <h3>{product.name}</h3>
+                  <div className="product-rating">
+                    {'⭐'.repeat(Math.floor(product.rating))} ({product.rating})
+                  </div>
+                  <div className="product-footer">
+                    <span className="product-price">₹{product.price}</span>
+                    <button className="add-to-cart-btn">Add to Cart</button>
+                  </div>
+                </div>
               ))}
             </div>
           ) : (
             <div className="no-products">
-              <h2>😕 No products found</h2>
-              <p>Try adjusting your filters or search query</p>
+              <p>No products found. Try adjusting your filters.</p>
             </div>
           )}
-        </main>
-      </div>
-
-      {/* FAQ Section */}
-      <section className="products-faq">
-        <h2>❓ Frequently Asked Questions</h2>
-        <div className="faq-grid">
-          <div className="faq-item">
-            <h4>How to choose the right product?</h4>
-            <p>
-              Use our Dosha Analyzer to identify your body type and get personalized product recommendations.
-            </p>
-          </div>
-          <div className="faq-item">
-            <h4>Are products authentic?</h4>
-            <p>
-              All our products are 100% authentic, sourced directly from certified Ayurvedic practitioners and manufacturers.
-            </p>
-          </div>
-          <div className="faq-item">
-            <h4>What is the delivery time?</h4>
-            <p>
-              We offer free delivery across India. Standard delivery takes 5-7 business days.
-            </p>
-          </div>
-          <div className="faq-item">
-            <h4>Can I return products?</h4>
-            <p>
-              Yes, we have a 30-day return policy for unused and unopened products. Contact our support team for details.
-            </p>
-          </div>
         </div>
-      </section>
+      </div>
     </div>
   )
 }
