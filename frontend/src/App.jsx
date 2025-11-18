@@ -14,6 +14,7 @@ import Blog from './pages/Blog'
 import Profile from './pages/Profile'
 import Wellness from './pages/Wellness'
 import Acharyas from './pages/Acharyas'
+import ComingSoon from './pages/ComingSoon'
 
 function App() {
   return (
@@ -32,6 +33,7 @@ function App() {
           <Route path="/profile" element={<Profile />} />
           <Route path="/wellness" element={<Wellness />} />
           <Route path="/acharyas" element={<Acharyas />} />
+          <Route path="/coming-soon" element={<ComingSoon />} />
         </Routes>
         <AyurvedicChatbot />
       </Layout>
