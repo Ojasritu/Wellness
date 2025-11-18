@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import './AyurvedicChatbot.css';
+import PanditRobotLogo from './PanditRobotLogo';
 
 const AyurvedicChatbot = () => {
   const [messages, setMessages] = useState([
@@ -119,14 +120,14 @@ const AyurvedicChatbot = () => {
 
   return (
     <div className="ayurvedic-chatbot-container">
-      {/* Chatbot Widget Toggle Button */}
+      {/* Chatbot Widget Toggle Button with Pandit Robot Logo */}
       <button 
         className="chatbot-toggle-btn"
         onClick={() => setIsOpen(!isOpen)}
         title={isOpen ? 'Close Chat' : 'Open Chat'}
       >
-        <span className="chatbot-icon">💬</span>
-        <span className="chatbot-status">Vaidya AI</span>
+        <PanditRobotLogo size={40} className="chatbot-pandit-logo" />
+        <span className="chatbot-status">Vaidya</span>
       </button>
 
       {/* Chat Window */}
@@ -135,8 +136,11 @@ const AyurvedicChatbot = () => {
           {/* Header */}
           <div className="chatbot-header">
             <div className="chatbot-title">
-              <h3>🧘 Vaidya AI</h3>
-              <p className="chatbot-subtitle">आयुर्वेद विशेषज्ञ</p>
+              <div className="chatbot-header-logo">
+                <PanditRobotLogo size={32} />
+              </div>
+              <h3>Vaidya AI</h3>
+              <p className="chatbot-subtitle">आयुर्वेद विशेषज्ञ • Powered by Gemini</p>
             </div>
             <button 
               className="chatbot-close"
@@ -172,7 +176,7 @@ const AyurvedicChatbot = () => {
                 }`}
               >
                 <div className="message-avatar">
-                  {message.type === 'user' ? '👤' : '🧘‍♀️'}
+                  {message.type === 'user' ? '👤' : <PanditRobotLogo size={24} />}
                 </div>
                 <div className="message-content">
                   <p>{message.content}</p>
@@ -192,7 +196,9 @@ const AyurvedicChatbot = () => {
             ))}
             {loading && (
               <div className="message bot-message typing">
-                <div className="message-avatar">🧘‍♀️</div>
+                <div className="message-avatar">
+                  <PanditRobotLogo size={24} />
+                </div>
                 <div className="typing-indicator">
                   <span></span>
                   <span></span>

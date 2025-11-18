@@ -12,29 +12,37 @@
 
 /* Toggle Button */
 .chatbot-toggle-btn {
-  width: 60px;
-  height: 60px;
+  width: 70px;
+  height: 70px;
   border-radius: 50%;
   background: linear-gradient(135deg, #d4af37 0%, #e8c547 100%);
-  border: none;
+  border: 3px solid #8b7355;
   cursor: pointer;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 4px 20px rgba(212, 175, 55, 0.4);
+  box-shadow: 0 4px 20px rgba(212, 175, 55, 0.4), inset 0 -2px 4px rgba(0,0,0,0.1);
   transition: all 0.3s ease;
   font-weight: bold;
   color: #0f1419;
+  padding: 0;
+  gap: 4px;
 }
 
 .chatbot-toggle-btn:hover {
-  transform: scale(1.1) translateY(-5px);
-  box-shadow: 0 6px 30px rgba(212, 175, 55, 0.6);
+  transform: scale(1.12) translateY(-5px);
+  box-shadow: 0 8px 30px rgba(212, 175, 55, 0.6), inset 0 -2px 4px rgba(0,0,0,0.1);
 }
 
 .chatbot-toggle-btn:active {
   transform: scale(0.95);
+}
+
+.chatbot-pandit-logo {
+  width: 40px;
+  height: 40px;
+  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
 }
 
 .chatbot-icon {
@@ -43,9 +51,10 @@
 }
 
 .chatbot-status {
-  font-size: 10px;
-  margin-top: 4px;
+  font-size: 9px;
+  margin-top: 2px;
   letter-spacing: 0.5px;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.2);
 }
 
 /* Chat Window */
@@ -80,23 +89,47 @@
 .chatbot-header {
   background: linear-gradient(135deg, #1a1f2e 0%, #252d3d 100%);
   border-bottom: 2px solid rgba(212, 175, 55, 0.3);
-  padding: 18px 16px;
+  padding: 14px 16px;
   display: flex;
   justify-content: space-between;
-  align-items: center;
+  align-items: flex-start;
+  gap: 12px;
 }
 
 .chatbot-title {
   flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.chatbot-header-logo {
+  flex-shrink: 0;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(212, 175, 55, 0.1);
+  border-radius: 6px;
+  padding: 2px;
 }
 
 .chatbot-title h3 {
   margin: 0;
   color: #d4af37;
-  font-size: 18px;
+  font-size: 16px;
   font-weight: 700;
   letter-spacing: 0.5px;
   text-shadow: 0 2px 8px rgba(212, 175, 55, 0.2);
+}
+
+.chatbot-subtitle {
+  margin: 2px 0 0 0;
+  color: #b8a99b;
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.3px;
 }
 
 .chatbot-subtitle {

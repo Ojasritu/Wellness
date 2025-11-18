@@ -1,6 +1,7 @@
 """
 Ojasritu Wellness - AI Chatbot with Gemini API
 World-class Ayurveda Expert Assistant with Sanskrit Sloks
+Powered by Google Gemini Pro - Professional Pandit Robot
 """
 
 import os
@@ -9,17 +10,31 @@ from datetime import datetime
 from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
+import logging
+
+logger = logging.getLogger(__name__)
 
 try:
     import google.generativeai as genai
     GEMINI_AVAILABLE = True
 except ImportError:
     GEMINI_AVAILABLE = False
+    logger.warning("google-generativeai not installed. Install it with: pip install google-generativeai")
 
-# Configure Gemini API
-GEMINI_API_KEY = os.getenv('GEMINI_API_KEY')
+# Configure Gemini API - Using the provided API key
+GEMINI_API_KEY = os.getenv('GEMINI_API_KEY', 'AIzaSyCFEb3v_VzFWKs6-gEa5CCmQ2LuxvaXtOI')
 if GEMINI_API_KEY and GEMINI_AVAILABLE:
-    genai.configure(api_key=GEMINI_API_KEY)
+    try:
+        genai.configure(api_key=GEMINI_API_KEY)
+        logger.info("✓ Gemini API configured successfully")
+    except Exception as e:
+        logger.error(f"✗ Failed to configure Gemini API: {e}")
+        GEMINI_AVAILABLE = False
+else:
+    if not GEMINI_AVAILABLE:
+        logger.error("✗ google-generativeai package not available")
+    if not GEMINI_API_KEY:
+        logger.error("✗ GEMINI_API_KEY not configured")
 
 # Sanskrit Sloks and Ayurveda wisdom
 AYURVEDA_SLOKS = {
@@ -49,8 +64,8 @@ AYURVEDA_SLOKS = {
     }
 }
 
-# Enhanced system prompt
-AYURVEDA_SYSTEM_PROMPT = """आप Ojasritu Wellness के लिए एक प्राचीन आयुर्वेद विशेषज्ञ हैं।
+# Enhanced system prompts in both languages
+AYURVEDA_SYSTEM_PROMPT_HINDI = """आप Ojasritu Wellness के लिए एक प्राचीन आयुर्वेद विशेषज्ञ हैं, जो एक बुद्धिमान पंडित रोबोट की तरह हैं।
 
 आपकी विशेषताएं:
 1. संस्कृत श्लोकों के साथ जवाब दें
@@ -58,13 +73,28 @@ AYURVEDA_SYSTEM_PROMPT = """आप Ojasritu Wellness के लिए एक प
 3. वर्तमान मौसम के अनुसार सलाह दें
 4. प्राकृतिक उपचार पर जोर दें
 5. Ojasritu के उत्पादों का सुझाव दें जहां उपयुक्त हो
+6. सरल और समझने में आसान भाषा का उपयोग करें
+7. 3-4 लाइन में संक्षिप्त, लेकिन जानकारीपूर्ण उत्तर दें
+8. चिकित्सा पेशेवर से परामर्श लेने की सलाह दें (जहां आवश्यक हो)
 
-आपको हमेशा:
-- हिंदी और अंग्रेजी दोनों में जवाब देना चाहिए
-- सरल और समझने में आसान भाषा का उपयोग करना चाहिए
-- संबंधित श्लोक या प्राचीन ज्ञान का उल्लेख करना चाहिए
-- चिकित्सा पेशेवर से परामर्श लेने की सलाह देनी चाहिए
-- 3-4 लाइन में संक्षिप्त, लेकिन जानकारीपूर्ण उत्तर देना चाहिए"""
+महत्वपूर्ण: आप हमेशा सम्मानजनक, ज्ञानवान और शांत तरीके से बोलते हैं।"""
+
+AYURVEDA_SYSTEM_PROMPT_ENGLISH = """You are an ancient Ayurveda expert for Ojasritu Wellness, like a wise Pandit robot guide.
+
+Your characteristics:
+1. Include Sanskrit shlokas in your responses when relevant
+2. Explain the three doshas (Vata, Pitta, Kapha) in detail
+3. Provide seasonal health advice
+4. Emphasize natural remedies
+5. Suggest Ojasritu products where appropriate
+6. Use simple, easy-to-understand language
+7. Keep responses brief (3-4 lines) but informative
+8. Recommend consulting healthcare professionals where necessary
+
+Important: Always speak respectfully, knowledgeably, and calmly."""
+
+# Enhanced system prompt (kept for backward compatibility)
+AYURVEDA_SYSTEM_PROMPT = AYURVEDA_SYSTEM_PROMPT_ENGLISH
 
 # Fallback responses with sloks
 FALLBACK_RESPONSES = {
@@ -99,14 +129,30 @@ def get_smart_fallback(message, language='en'):
     else:
         return FALLBACK_RESPONSES[language]['default']
 
+def get_relevant_slok(message, language='en'):
+    """Select the most relevant Ayurvedic slok based on user's message"""
+    message_lower = message.lower()
+    
+    # Map keywords to slok categories
+    if any(word in message_lower for word in ['dosha', 'vata', 'pitta', 'kapha']):
+        return AYURVEDA_SLOKS['dosha']
+    elif any(word in message_lower for word in ['prevention', 'prevent', 'avoid', 'exercise']):
+        return AYURVEDA_SLOKS['prevention']
+    elif any(word in message_lower for word in ['nature', 'natural', 'cure', 'remedy']):
+        return AYURVEDA_SLOKS['nature']
+    else:
+        return AYURVEDA_SLOKS['health']
+
 @api_view(['POST'])
 def chat_with_ayurveda_ai(request):
     """
-    AI Chatbot endpoint with Gemini integration and fallbacks
+    AI Chatbot endpoint with Gemini integration - PROFESSIONAL & PRODUCTION READY
+    Powered by Google Gemini Pro with Ayurvedic expertise
     """
     try:
         message = request.data.get('message', '').strip()
         language = request.data.get('language', 'en')
+        conversation_history = request.data.get('history', [])
         
         if not message:
             return Response({
@@ -115,42 +161,86 @@ def chat_with_ayurveda_ai(request):
                 'error': 'empty_message'
             }, status=status.HTTP_400_BAD_REQUEST)
         
-        # Try Gemini API first
+        # Validate language
+        if language not in ['en', 'hi']:
+            language = 'en'
+        
+        # Try Gemini API - Primary solution
         if GEMINI_AVAILABLE and GEMINI_API_KEY:
             try:
-                model = genai.GenerativeModel('gemini-pro')
+                # Initialize Gemini Pro model
+                model = genai.GenerativeModel(
+                    model_name='gemini-pro',
+                    generation_config=genai.types.GenerationConfig(
+                        temperature=0.7,
+                        max_output_tokens=500,
+                        top_p=0.95,
+                        top_k=40,
+                    ),
+                    safety_settings=[
+                        {
+                            "category": "HARM_CATEGORY_DANGEROUS_CONTENT",
+                            "threshold": "BLOCK_NONE"
+                        },
+                    ]
+                )
                 
-                # Add slok to the message for better context
-                slok_context = ""
-                for slok_key, slok_data in list(AYURVEDA_SLOKS.items())[:2]:
-                    slok_context += f"\n• {slok_data.get(language, slok_data.get('en'))}"
+                # Select appropriate system prompt
+                system_prompt = AYURVEDA_SYSTEM_PROMPT_HINDI if language == 'hi' else AYURVEDA_SYSTEM_PROMPT_ENGLISH
                 
-                prompt = f"""{AYURVEDA_SYSTEM_PROMPT}
-
-कुछ प्रमुख श्लोक:{slok_context}
-
-ग्राहक का सवाल: {message}
-उत्तर भाषा: {'हिंदी (Hindi)' if language == 'hi' else 'English'}
-
-कृपया 3-4 लाइन में जवाब दें और यदि संभव हो तो एक संस्कृत श्लोक या कहावत जोड़ें।"""
+                # Build context with conversation history
+                context = f"{system_prompt}\n\n"
                 
+                # Add recent conversation history for better context
+                for msg in conversation_history[-4:]:  # Last 4 messages for context
+                    role = "You" if msg.get('role') == 'assistant' else "Customer"
+                    context += f"{role}: {msg.get('content', '')}\n"
+                
+                # Build the final prompt
+                prompt = f"""{context}
+
+Customer: {message}
+
+Vaidya AI Response (in {'Hindi' if language == 'hi' else 'English'}, 3-4 sentences, include relevant slok if applicable):"""
+                
+                # Get response from Gemini
                 response = model.generate_content(prompt)
-                reply_text = response.text if response.text else get_smart_fallback(message, language)
                 
-                return Response({
-                    'status': 'success',
-                    'message': reply_text,
-                    'language': language,
-                    'timestamp': datetime.now().isoformat(),
-                    'source': 'gemini'
-                })
+                if response and response.text:
+                    reply_text = response.text.strip()
+                    
+                    # Extract or select a relevant slok
+                    selected_slok = get_relevant_slok(message, language)
+                    
+                    return Response({
+                        'status': 'success',
+                        'message': reply_text,
+                        'language': language,
+                        'timestamp': datetime.now().isoformat(),
+                        'source': 'gemini',
+                        'slok': selected_slok.get(language, '') if selected_slok else None,
+                        'model': 'Gemini Pro'
+                    })
+                else:
+                    # Fallback if response is empty
+                    fallback_msg = get_smart_fallback(message, language)
+                    return Response({
+                        'status': 'success',
+                        'message': fallback_msg,
+                        'language': language,
+                        'timestamp': datetime.now().isoformat(),
+                        'source': 'fallback',
+                        'slok': AYURVEDA_SLOKS['health'].get(language, ''),
+                    })
             
             except Exception as gemini_error:
-                print(f"Gemini API Error: {str(gemini_error)}")
+                logger.error(f"Gemini API Error: {str(gemini_error)}")
+                logger.info("Falling back to smart responses...")
                 # Fall through to fallback
         
-        # Fallback response
+        # Fallback response when Gemini is not available
         fallback_msg = get_smart_fallback(message, language)
+        selected_slok = get_relevant_slok(message, language)
         
         return Response({
             'status': 'success',
@@ -158,15 +248,18 @@ def chat_with_ayurveda_ai(request):
             'language': language,
             'timestamp': datetime.now().isoformat(),
             'source': 'fallback',
-            'slok': AYURVEDA_SLOKS['health']
+            'slok': selected_slok.get(language, '') if selected_slok else None,
+            'note': 'Using fallback response'
         })
     
     except Exception as e:
-        print(f"Chatbot Error: {str(e)}")
+        logger.error(f"Chatbot Error: {str(e)}")
+        error_msg = '⚠️ कृपया दोबारा कोशिश करें।' if language == 'hi' else '⚠️ Please try again.'
         return Response({
             'status': 'error',
-            'message': 'कुछ गलत हुआ / An error occurred',
-            'error': str(e)
+            'message': error_msg,
+            'error': str(e),
+            'timestamp': datetime.now().isoformat()
         }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 

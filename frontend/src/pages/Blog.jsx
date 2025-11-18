@@ -1,22 +1,122 @@
 import React from 'react'
 
 const demoPosts = [
-  { id: 1, title: 'Ayurvedic Morning Routine', excerpt: 'Start your day the Ayurvedic way...' },
-  { id: 2, title: 'Herbal Oils 101', excerpt: 'Guide to herbal oils and uses.' },
+  { id: 1, title: 'Ayurvedic Morning Routine', excerpt: 'Start your day the Ayurvedic way with ancient practices designed to balance your mind, body, and spirit.' },
+  { id: 2, title: 'Herbal Oils 101', excerpt: 'Discover the therapeutic properties of traditional Ayurvedic oils and their applications.' },
+  { id: 3, title: 'Seasonal Wellness Guide', excerpt: 'Adapt your lifestyle to seasonal changes with Ayurvedic recommendations.' },
+  { id: 4, title: 'Food as Medicine', excerpt: 'Understanding how to use food as the first line of wellness.' },
+  { id: 5, title: 'Meditation Techniques', excerpt: 'Ancient meditation methods for modern stress relief.' },
+  { id: 6, title: 'Dosha Balance Mastery', excerpt: 'Learn to recognize and balance your unique constitutional makeup.' },
+import './CommonComingSoon.css'
 ]
 
 export default function Blog() {
+// Fern SVG Component
+const FernDecoration = () => (
+  <svg viewBox="0 0 200 300" xmlns="http://www.w3.org/2000/svg" className="fern-svg">
+    <defs>
+      <linearGradient id="fernGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%" style={{stopColor: '#d4af37', stopOpacity: 0.9}} />
+        <stop offset="100%" style={{stopColor: '#a8a8a8', stopOpacity: 0.6}} />
+      </linearGradient>
+    </defs>
+    <path d="M 100 10 Q 90 40 85 70 Q 80 100 78 130 M 100 10 Q 110 40 115 70 Q 120 100 122 130" stroke="url(#fernGrad)" strokeWidth="2" fill="none" />
+    <path d="M 85 50 Q 75 55 70 65" stroke="url(#fernGrad)" strokeWidth="1.5" fill="none" />
+    <path d="M 85 50 Q 95 55 100 65" stroke="url(#fernGrad)" strokeWidth="1.5" fill="none" />
+    <path d="M 90 80 Q 80 85 75 95" stroke="url(#fernGrad)" strokeWidth="1.5" fill="none" />
+    <path d="M 90 80 Q 100 85 105 95" stroke="url(#fernGrad)" strokeWidth="1.5" fill="none" />
+    <path d="M 115 50 Q 125 55 130 65" stroke="url(#fernGrad)" strokeWidth="1.5" fill="none" />
+    <path d="M 115 50 Q 105 55 100 65" stroke="url(#fernGrad)" strokeWidth="1.5" fill="none" />
+    <path d="M 110 80 Q 120 85 125 95" stroke="url(#fernGrad)" strokeWidth="1.5" fill="none" />
+    <path d="M 110 80 Q 100 85 95 95" stroke="url(#fernGrad)" strokeWidth="1.5" fill="none" />
+    <path d="M 78 150 L 70 170 M 78 150 L 85 170 M 122 150 L 130 170 M 122 150 L 115 170" stroke="url(#fernGrad)" strokeWidth="1.5" fill="none" />
+  </svg>
+)
+
+// Lotus SVG Component
+const LotusDecoration = () => (
+  <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg" className="lotus-svg">
+    <defs>
+      <radialGradient id="lotusGrad">
+        <stop offset="0%" style={{stopColor: '#f0d9a0', stopOpacity: 1}} />
+        <stop offset="100%" style={{stopColor: '#d4af37', stopOpacity: 0.8}} />
+      </radialGradient>
+    </defs>
+    {/* Petals */}
+    <ellipse cx="100" cy="60" rx="25" ry="40" fill="url(#lotusGrad)" opacity="0.9" />
+    <ellipse cx="145" cy="80" rx="25" ry="40" fill="url(#lotusGrad)" opacity="0.85" transform="rotate(72 100 100)" />
+    <ellipse cx="145" cy="80" rx="25" ry="40" fill="url(#lotusGrad)" opacity="0.8" transform="rotate(144 100 100)" />
+    <ellipse cx="145" cy="80" rx="25" ry="40" fill="url(#lotusGrad)" opacity="0.85" transform="rotate(216 100 100)" />
+    <ellipse cx="145" cy="80" rx="25" ry="40" fill="url(#lotusGrad)" opacity="0.9" transform="rotate(288 100 100)" />
+    {/* Center */}
+    <circle cx="100" cy="100" r="20" fill="#d4af37" opacity="0.95" />
+    <circle cx="100" cy="100" r="15" fill="#f0d9a0" opacity="0.8" />
+  </svg>
+)
+
   return (
-    <div className="container blog">
-      <h2>Blog</h2>
-      <div className="posts">
-        {demoPosts.map((p) => (
-          <article key={p.id} className="post">
-            <h3>{p.title}</h3>
-            <p>{p.excerpt}</p>
-            <a href="#">Read more</a>
-          </article>
-        ))}
+    <div className="blog-wrapper">
+      {/* Background with watercolor effects */}
+      <div className="blog-background">
+        <div className="watercolor blog-watercolor-1"></div>
+        <div className="watercolor blog-watercolor-2"></div>
+        <div className="watercolor blog-watercolor-3"></div>
+      </div>
+
+      {/* Decorative Elements */}
+      <div className="blog-decorations">
+          <div className="fern-decoration blog-fern"><FernDecoration /></div>
+          <div className="lotus-decoration blog-lotus"><LotusDecoration /></div>
+      </div>
+
+      {/* Main Content */}
+      <div className="blog-container">
+        {/* Featured Image */}
+        <div className="blog-image-section">
+          <img 
+            src="data:image/svg+xml,%3Csvg viewBox='0 0 1920 1080' xmlns='http://www.w3.org/2000/svg'%3E%3Cdefs%3E%3ClinearGradient id='bg' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' style='stop-color:%230d2941;stop-opacity:1'/%3E%3Cstop offset='100%25' style='stop-color:%23254a5c;stop-opacity:1'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='1920' height='1080' fill='url(%23bg)'/%3E%3Ctext x='960' y='540' font-size='120' font-family='Georgia, serif' fill='%23d4af37' text-anchor='middle' dominant-baseline='middle'%3EWellness Blog%3C/text%3E%3Ctext x='960' y='640' font-size='48' font-family='Georgia, serif' fill='%23c0c0c0' text-anchor='middle' dominant-baseline='middle'%3EAncient Wisdom for Modern Living%3C/text%3E%3C/svg%3E" 
+            alt="Blog Coming Soon" 
+            className="blog-image"
+          />
+        </div>
+
+        {/* Gold Divider */}
+        <div className="gold-divider"></div>
+
+        {/* Content Section */}
+        <div className="blog-content">
+          <h1 className="blog-title">Wellness Blog</h1>
+          <p className="blog-subtitle">Ancient Wisdom for Modern Living</p>
+          
+          <div className="blog-intro">
+            <p className="blog-description">
+              Explore in-depth articles on Ayurvedic practices, wellness tips, seasonal guidance, and expert insights from our community of practitioners.
+            </p>
+          </div>
+
+          {/* Blog Preview Grid */}
+          <div className="blog-grid">
+            {demoPosts.map((post) => (
+              <article key={post.id} className="blog-card">
+                <div className="blog-card-header">
+                  <span className="blog-number">#{post.id}</span>
+                </div>
+                <h3 className="blog-card-title">{post.title}</h3>
+                <p className="blog-card-excerpt">{post.excerpt}</p>
+                <a href="#" className="blog-card-link">Read Article →</a>
+              </article>
+            ))}
+          </div>
+
+          <div className="coming-year">2026</div>
+          
+          <button className="blog-cta-button">
+            Subscribe to Updates
+          </button>
+        </div>
+
+        {/* Bottom Divider */}
+        <div className="gold-divider"></div>
       </div>
     </div>
   )
