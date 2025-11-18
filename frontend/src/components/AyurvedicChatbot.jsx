@@ -6,7 +6,7 @@ const AyurvedicChatbot = () => {
     {
       id: 1,
       type: 'bot',
-      content: 'नमस्ते! 🙏 Ojasritu Wellness में आपका स्वागत है। मैं एक AI-संचालित आयुर्वेद विशेषज्ञ हूँ।',
+      content: 'नमस्ते! 🙏 Ojasritu Wellness में आपका स्वागत है। मैं आपकी आयुर्वेद संबंधित सभी प्रश्नों का उत्तर देने के लिए यहाँ हूँ।',
       slok: 'शरीरमाद्यं खलु धर्मसाधनम्।',
       timestamp: new Date()
     }
@@ -126,7 +126,7 @@ const AyurvedicChatbot = () => {
         title={isOpen ? 'Close Chat' : 'Open Chat'}
       >
         <span className="chatbot-icon">💬</span>
-        <span className="chatbot-status">नमस्ते</span>
+        <span className="chatbot-status">Vaidya AI</span>
       </button>
 
       {/* Chat Window */}
@@ -135,7 +135,7 @@ const AyurvedicChatbot = () => {
           {/* Header */}
           <div className="chatbot-header">
             <div className="chatbot-title">
-              <h3>🧘 Ojasritu Wellness AI</h3>
+              <h3>🧘 Vaidya AI</h3>
               <p className="chatbot-subtitle">आयुर्वेद विशेषज्ञ</p>
             </div>
             <button 

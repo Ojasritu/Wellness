@@ -3,29 +3,27 @@ import './Products.css'
 
 const Products = () => {
   const [selectedCategory, setSelectedCategory] = useState('all')
-  const [selectedDosha, setSelectedDosha] = useState('all')
   const [searchTerm, setSearchTerm] = useState('')
   const [sortBy, setSortBy] = useState('featured')
 
   // Sample product data (in production, this comes from API)
   const allProducts = [
-    { id: 1, name: 'Ashwagandha Root Powder', category: 'supplements', dosha: 'vata', price: 299, rating: 4.8, image: '🌿' },
-    { id: 2, name: 'Brahmi Oil', category: 'oils', dosha: 'pitta', price: 450, rating: 4.6, image: '🧴' },
-    { id: 3, name: 'Neem Face Mask', category: 'skincare', dosha: 'pitta', price: 199, rating: 4.7, image: '💆' },
-    { id: 4, name: 'Sesame Oil', category: 'oils', dosha: 'vata', price: 350, rating: 4.9, image: '🧴' },
-    { id: 5, name: 'Triphala Powder', category: 'supplements', dosha: 'all', price: 249, rating: 4.8, image: '🌿' },
-    { id: 6, name: 'Tulsi Tea', category: 'tea', dosha: 'all', price: 150, rating: 4.7, image: '🍵' },
-    { id: 7, name: 'Brahmi Tea', category: 'tea', dosha: 'pitta', price: 140, rating: 4.6, image: '🍵' },
-    { id: 8, name: 'Coconut Oil', category: 'oils', dosha: 'pitta', price: 320, rating: 4.8, image: '🧴' },
+    { id: 1, name: 'Ashwagandha Root Powder', category: 'supplements', price: 299, rating: 4.8, image: '🌿' },
+    { id: 2, name: 'Brahmi Oil', category: 'oils', price: 450, rating: 4.6, image: '🧴' },
+    { id: 3, name: 'Morning Routine Kit', category: 'daily-routine', price: 599, rating: 4.7, image: '📦' },
+    { id: 4, name: 'Sesame Oil Massage', category: 'oils', price: 350, rating: 4.9, image: '🧴' },
+    { id: 5, name: 'Triphala Powder', category: 'supplements', price: 249, rating: 4.8, image: '🌿' },
+    { id: 6, name: 'Evening Wellness Set', category: 'daily-routine', price: 799, rating: 4.7, image: '📦' },
+    { id: 7, name: 'Brahmi Supplement', category: 'supplements', price: 280, rating: 4.6, image: '🌿' },
+    { id: 8, name: 'Coconut Oil Premium', category: 'oils', price: 320, rating: 4.8, image: '🧴' },
   ]
 
   // Filter and sort products
   const filteredProducts = useMemo(() => {
     let filtered = allProducts.filter(product => {
       const categoryMatch = selectedCategory === 'all' || product.category === selectedCategory
-      const doshaMatch = selectedDosha === 'all' || product.dosha === selectedDosha || product.dosha === 'all'
       const searchMatch = searchTerm === '' || product.name.toLowerCase().includes(searchTerm.toLowerCase())
-      return categoryMatch && doshaMatch && searchMatch
+      return categoryMatch && searchMatch
     })
 
     // Sort
@@ -38,7 +36,7 @@ const Products = () => {
     }
 
     return filtered
-  }, [selectedCategory, selectedDosha, searchTerm, sortBy])
+  }, [selectedCategory, searchTerm, sortBy])
 
   return (
     <div className="products-page">
@@ -80,30 +78,8 @@ const Products = () => {
                 Oils
               </label>
               <label>
-                <input type="radio" name="category" value="skincare" checked={selectedCategory === 'skincare'} onChange={(e) => setSelectedCategory(e.target.value)} />
-                Skincare
-              </label>
-              <label>
-                <input type="radio" name="category" value="tea" checked={selectedCategory === 'tea'} onChange={(e) => setSelectedCategory(e.target.value)} />
-                Herbal Teas
-              </label>
-            </div>
-          </div>
-
-          <div className="filter-group">
-            <h3>Dosha</h3>
-            <div className="filter-options">
-              <label>
-                <input type="radio" name="dosha" value="all" checked={selectedDosha === 'all'} onChange={(e) => setSelectedDosha(e.target.value)} />
-                All Doshas
-              </label>
-              <label>
-                <input type="radio" name="dosha" value="vata" checked={selectedDosha === 'vata'} onChange={(e) => setSelectedDosha(e.target.value)} />
-                Vata 🌬️
-              </label>
-              <label>
-                <input type="radio" name="dosha" value="pitta" checked={selectedDosha === 'pitta'} onChange={(e) => setSelectedDosha(e.target.value)} />
-                Pitta 🔥
+                <input type="radio" name="category" value="daily-routine" checked={selectedCategory === 'daily-routine'} onChange={(e) => setSelectedCategory(e.target.value)} />
+                Daily Routine
               </label>
             </div>
           </div>

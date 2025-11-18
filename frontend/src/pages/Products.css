@@ -72,6 +72,12 @@
   transition: all 0.3s ease;
 }
 
+.sort-select option {
+  background: #1a1f2e;
+  color: #e0e8f0;
+  padding: 8px;
+}
+
 .search-input:focus,
 .sort-select:focus {
   outline: none;

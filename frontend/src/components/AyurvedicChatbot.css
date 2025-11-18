@@ -80,7 +80,7 @@
 .chatbot-header {
   background: linear-gradient(135deg, #1a1f2e 0%, #252d3d 100%);
   border-bottom: 2px solid rgba(212, 175, 55, 0.3);
-  padding: 16px;
+  padding: 18px 16px;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -93,31 +93,39 @@
 .chatbot-title h3 {
   margin: 0;
   color: #d4af37;
-  font-size: 16px;
-  font-weight: 600;
+  font-size: 18px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  text-shadow: 0 2px 8px rgba(212, 175, 55, 0.2);
 }
 
 .chatbot-subtitle {
   margin: 4px 0 0;
-  color: #00d4ff;
+  color: #b9c6d8;
   font-size: 12px;
+  font-weight: 500;
 }
 
 .chatbot-close {
-  background: rgba(212, 175, 55, 0.2);
-  border: 1px solid rgba(212, 175, 55, 0.4);
+  background: rgba(212, 175, 55, 0.1);
+  border: 1px solid rgba(212, 175, 55, 0.3);
   color: #d4af37;
-  width: 32px;
-  height: 32px;
+  width: 36px;
+  height: 36px;
   border-radius: 50%;
   cursor: pointer;
   transition: all 0.3s ease;
-  font-size: 16px;
+  font-size: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
 }
 
 .chatbot-close:hover {
-  background: rgba(212, 175, 55, 0.4);
+  background: rgba(212, 175, 55, 0.25);
   transform: scale(1.1);
+  box-shadow: 0 0 10px rgba(212, 175, 55, 0.3);
 }
 
 /* Language Selector */
