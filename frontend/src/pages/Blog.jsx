@@ -1,4 +1,5 @@
 import React from 'react'
+import './CommonComingSoon.css'
 
 const demoPosts = [
   { id: 1, title: 'Ayurvedic Morning Routine', excerpt: 'Start your day the Ayurvedic way with ancient practices designed to balance your mind, body, and spirit.' },
@@ -7,7 +8,6 @@ const demoPosts = [
   { id: 4, title: 'Food as Medicine', excerpt: 'Understanding how to use food as the first line of wellness.' },
   { id: 5, title: 'Meditation Techniques', excerpt: 'Ancient meditation methods for modern stress relief.' },
   { id: 6, title: 'Dosha Balance Mastery', excerpt: 'Learn to recognize and balance your unique constitutional makeup.' },
-import './CommonComingSoon.css'
 ]
 
 export default function Blog() {
