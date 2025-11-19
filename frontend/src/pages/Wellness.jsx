@@ -66,9 +66,10 @@ export default function Wellness() {
         {/* Featured Image */}
         <div className="wellness-image-section">
           <img 
-            src="data:image/svg+xml,%3Csvg viewBox='0 0 1920 1080' xmlns='http://www.w3.org/2000/svg'%3E%3Cdefs%3E%3ClinearGradient id='bg' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' style='stop-color:%230d2941;stop-opacity:1'/%3E%3Cstop offset='100%25' style='stop-color:%23254a5c;stop-opacity:1'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='1920' height='1080' fill='url(%23bg)'/%3E%3Ctext x='960' y='540' font-size='120' font-family='Georgia, serif' fill='%23d4af37' text-anchor='middle' dominant-baseline='middle'%3EWellness Centre%3C/text%3E%3Ctext x='960' y='640' font-size='48' font-family='Georgia, serif' fill='%23c0c0c0' text-anchor='middle' dominant-baseline='middle'%3EHolistic Healing Spaces%3C/text%3E%3C/svg%3E" 
-            alt="Wellness Centre Coming Soon" 
+            src="/images/coming-soon-ayurveda.svg"
+            alt="Coming Soon Ancient Ayurveda & Nature"
             className="wellness-image"
+            style={{width: '100%', maxWidth: '700px', borderRadius: '16px', boxShadow: '0 4px 32px rgba(0,0,0,0.15)'}}
           />
         </div>
 
@@ -90,17 +91,17 @@ export default function Wellness() {
           {/* Features */}
           <div className="wellness-features">
             <div className="feature-card wellness-feature">
-              <div className="feature-icon">🌿</div>
+              <div className="feature-icon"></div>
               <h3>Personalized Consultations</h3>
               <p>Expert Vaidyas will assess your dosha and create customized wellness plans</p>
             </div>
             <div className="feature-card wellness-feature">
-              <div className="feature-icon">💆</div>
+              <div className="feature-icon"></div>
               <h3>Therapeutic Treatments</h3>
               <p>Traditional Abhyanga, Shirodhara, and modern healing modalities</p>
             </div>
             <div className="feature-card wellness-feature">
-              <div className="feature-icon">🧘</div>
+              <div className="feature-icon"></div>
               <h3>Wellness Programs</h3>
               <p>Guided yoga, meditation, and lifestyle transformation courses</p>
             </div>

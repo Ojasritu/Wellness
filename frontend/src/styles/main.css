@@ -1,3 +1,12 @@
+/* Big Coming Soon image style */
+.big-coming-soon {
+  width: 100%;
+  max-width: 900px;
+  border-radius: 24px;
+  box-shadow: 0 8px 48px rgba(0,0,0,0.25);
+  margin: 0 auto 32px auto;
+  display: block;
+}
 /* ===== Ayurveda Wellness - Premium Theme ===== */
 /* Dark Navy Blue (#001a33) & Golden (#D4AF37) */
 
