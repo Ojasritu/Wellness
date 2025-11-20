@@ -1,0 +1,21 @@
+.profile-page.container-grid{display:flex;gap:24px;padding:16px;box-sizing:border-box}
+.profile-side{width:260px;flex-shrink:0}
+.avatar-box{background:#fff;border:1px solid #eee;padding:12px;border-radius:8px;text-align:center}
+.avatar-img{width:120px;height:120px;border-radius:999px;object-fit:cover;display:block;margin:0 auto}
+.avatar-placeholder{width:120px;height:120px;border-radius:999px;background:#f0f0f0;display:flex;align-items:center;justify-content:center;font-size:36px;color:#777;margin:0 auto}
+.avatar-actions{margin-top:8px;display:flex;flex-direction:column;gap:8px}
+.profile-links{margin-top:16px;display:flex;flex-direction:column;gap:8px}
+.profile-links a, .profile-links button{color:#1a73e8;text-decoration:none;background:transparent;border:0;padding:6px 0;text-align:left;cursor:pointer}
+.profile-main{flex:1;background:#fff;border:1px solid #eee;padding:16px;border-radius:8px}
+.field-row{display:flex;flex-direction:column;margin-bottom:12px}
+.field-row label{font-weight:600;margin-bottom:6px}
+.field-row input, .field-row textarea{padding:8px;border:1px solid #ddd;border-radius:6px;font-size:14px}
+.field-value{padding:8px 0;color:#333}
+.actions{margin-top:12px}
+.actions .btn{padding:8px 14px;border-radius:6px;border:0;cursor:pointer}
+.btn-primary{background:#1a73e8;color:#fff}
+.btn-danger{background:#e53e3e;color:#fff}
+.history{margin-top:18px}
+.history ul{list-style:none;padding-left:0}
+.history li{padding:8px 0;border-bottom:1px solid #f2f2f2}
+@media (max-width:800px){.profile-page.container-grid{flex-direction:column}.profile-side{width:100%}}
