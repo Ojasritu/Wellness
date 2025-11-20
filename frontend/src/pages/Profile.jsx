@@ -5,6 +5,9 @@ function Profile() {
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
   const [avatarFile, setAvatarFile] = useState(null)
+  const [firstName, setFirstName] = useState('')
+  const [lastName, setLastName] = useState('')
+  const [emailField, setEmailField] = useState('')
 
   useEffect(() => {
     fetch('/api/profile/', { credentials: 'include' })
@@ -13,6 +16,14 @@ function Profile() {
       .catch(() => setProfile(null))
       .finally(() => setLoading(false))
   }, [])
+
+  useEffect(() => {
+    if (profile) {
+      setFirstName(profile.first_name || '')
+      setLastName(profile.last_name || '')
+      setEmailField(profile.email || '')
+    }
+  }, [profile])
 
   useEffect(() => {
     // Fetch orders and rebookings for history
@@ -32,6 +43,9 @@ function Profile() {
       const form = new FormData()
       if (profile.phone) form.append('phone', profile.phone)
       if (profile.bio) form.append('bio', profile.bio)
+      if (firstName) form.append('first_name', firstName)
+      if (lastName) form.append('last_name', lastName)
+      if (emailField) form.append('email', emailField)
       if (avatarFile) form.append('avatar', avatarFile)
 
       const res = await fetch('/api/profile/', {
@@ -80,7 +94,16 @@ function Profile() {
         <strong>Username:</strong> {profile.username}
       </div>
       <div>
-        <strong>Email:</strong> {profile.email}
+        <label>First name</label>
+        <input value={firstName} onChange={(e) => setFirstName(e.target.value)} />
+      </div>
+      <div>
+        <label>Last name</label>
+        <input value={lastName} onChange={(e) => setLastName(e.target.value)} />
+      </div>
+      <div>
+        <label>Email</label>
+        <input value={emailField} onChange={(e) => setEmailField(e.target.value)} />
       </div>
       <div>
         <label>Phone</label>
@@ -93,7 +116,17 @@ function Profile() {
       <div>
         <label>Avatar</label>
         {profile.avatar && <img src={profile.avatar} alt="avatar" style={{width:80,height:80,borderRadius:40}} />}
-        <input type="file" accept="image/*" onChange={(e) => setAvatarFile(e.target.files[0])} />
+        <div>
+          <input type="file" accept="image/*" onChange={(e) => setAvatarFile(e.target.files[0])} />
+          {profile.avatar && (
+            <button onClick={async () => {
+              const res = await fetch('/api/profile/avatar/', { method: 'DELETE', credentials: 'include' })
+              if (res.ok) {
+                setProfile({...profile, avatar: null})
+              }
+            }}>Delete avatar</button>
+          )}
+        </div>
       </div>
       <div>
         <button onClick={handleSave} disabled={saving}>{saving ? 'Saving...' : 'Save Profile'}</button>

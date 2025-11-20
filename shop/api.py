@@ -17,6 +17,8 @@ from django.views.decorators.csrf import csrf_exempt
 # For Google ID token verification
 from google.oauth2 import id_token as google_id_token
 from google.auth.transport import requests as google_requests
+from django.core.files.base import ContentFile
+import requests
 
 
 # ===== SERIALIZERS =====
@@ -357,10 +359,19 @@ class GoogleAuthAPIView(APIView):
             # Create profile and possibly save avatar URL
             profile, _ = Profile.objects.get_or_create(user=user)
             picture = idinfo.get('picture')
-            if picture and not profile.avatar:
-                # Do not download image here; store the remote url in bio as a temporary hint
-                # (downloading/storing would require more work). We'll skip automatic avatar save.
-                pass
+            if picture:
+                try:
+                    # download the image and save to profile.avatar
+                    r = requests.get(picture, timeout=5)
+                    if r.status_code == 200:
+                        ext = picture.split('.')[-1].split('?')[0]
+                        if len(ext) > 5:
+                            ext = 'jpg'
+                        file_name = f"avatar_{user.username}.{ext}"
+                        profile.avatar.save(file_name, ContentFile(r.content), save=True)
+                except Exception:
+                    # ignore avatar download errors
+                    pass
 
             # Log the user in via session
             login(request, user)
@@ -374,4 +385,23 @@ class GoogleAuthAPIView(APIView):
 
 urlpatterns += [
     path('auth/google/', GoogleAuthAPIView.as_view(), name='api-auth-google'),
+]
+
+
+# ===== Avatar delete endpoint =====
+class AvatarDeleteAPIView(APIView):
+    def delete(self, request):
+        user = request.user
+        if not user.is_authenticated:
+            return Response({'detail': 'Authentication required'}, status=status.HTTP_401_UNAUTHORIZED)
+        profile, _ = Profile.objects.get_or_create(user=user)
+        if profile.avatar:
+            profile.avatar.delete(save=False)
+            profile.avatar = None
+            profile.save()
+        return Response({'detail': 'avatar deleted'})
+
+
+urlpatterns += [
+    path('profile/avatar/', AvatarDeleteAPIView.as_view(), name='api-profile-avatar-delete'),
 ]
