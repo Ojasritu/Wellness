@@ -120,7 +120,14 @@ const Login = () => {
 
             <div className="divider">OR</div>
 
-            <button className="google-login">
+            <button
+              className="google-login"
+              onClick={() => {
+                // Redirect to Django-allauth Google login URL
+                // allauth default endpoint: /accounts/google/login/
+                window.location.href = '/accounts/google/login/';
+              }}
+            >
               <span>🔐</span> Sign in with Google
             </button>
 

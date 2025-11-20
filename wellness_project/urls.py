@@ -7,6 +7,7 @@ from django.utils import timezone
 from shop import views
 from shop import api as shop_api
 from shop import chatbot_improved as chatbot
+from django.urls import include
 
 def health_check(request):
     """Health check endpoint that returns basic application status."""
@@ -30,6 +31,8 @@ def health_check(request):
 
 urlpatterns = [
     path("admin/", admin.site.urls),
+    # Django-allauth endpoints for social authentication
+    path('accounts/', include('allauth.urls')),
     path("", views.home, name="home"),
     path("checkout/", views.checkout, name="checkout"),
     path("success/", views.success, name="success"),
