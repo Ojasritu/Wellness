@@ -1,11 +1,13 @@
 from rest_framework import serializers, viewsets, routers, status
 from rest_framework.decorators import action
 from rest_framework.response import Response
+from rest_framework.views import APIView
 from django.urls import path, include
 from .models import (
     Category, Product, ProductReview, Cart, CartItem,
     Order, Rebooking, Article, FAQ, ContactMessage
 )
+from .models import Profile
 
 
 # ===== SERIALIZERS =====
@@ -225,9 +227,43 @@ class ContactMessageViewSet(viewsets.ModelViewSet):
         return ContactMessage.objects.filter(email=self.request.user.email)
 
 
+# ===== PROFILE SERIALIZER & VIEW =====
+class ProfileSerializer(serializers.ModelSerializer):
+    username = serializers.CharField(source='user.username', read_only=True)
+    email = serializers.CharField(source='user.email', read_only=True)
+
+    class Meta:
+        model = Profile
+        fields = ['id', 'username', 'email', 'avatar', 'phone', 'bio']
+
+
+class ProfileAPIView(APIView):
+    """Simple profile endpoints for the current authenticated user"""
+
+    def get(self, request):
+        user = request.user
+        if not user.is_authenticated:
+            return Response({'detail': 'Authentication required'}, status=status.HTTP_401_UNAUTHORIZED)
+        profile, _ = Profile.objects.get_or_create(user=user)
+        serializer = ProfileSerializer(profile, context={'request': request})
+        return Response(serializer.data)
+
+    def put(self, request):
+        user = request.user
+        if not user.is_authenticated:
+            return Response({'detail': 'Authentication required'}, status=status.HTTP_401_UNAUTHORIZED)
+        profile, _ = Profile.objects.get_or_create(user=user)
+        serializer = ProfileSerializer(profile, data=request.data, partial=True, context={'request': request})
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
 # ===== ROUTER =====
 
 router = routers.DefaultRouter()
+
 router.register(r'categories', CategoryViewSet, basename='category')
 router.register(r'products', ProductViewSet, basename='product')
 router.register(r'orders', OrderViewSet, basename='order')
@@ -237,3 +273,20 @@ router.register(r'faqs', FAQViewSet, basename='faq')
 router.register(r'contact', ContactMessageViewSet, basename='contact')
 
 urlpatterns = router.urls
+urlpatterns += [
+    path('profile/', ProfileAPIView.as_view(), name='api-profile'),
+]
+
+
+class LogoutAPIView(APIView):
+    """API endpoint to log out the current user"""
+
+    def post(self, request):
+        from django.contrib.auth import logout
+        logout(request)
+        return Response({'detail': 'logged out'})
+
+
+urlpatterns += [
+    path('logout/', LogoutAPIView.as_view(), name='api-logout'),
+]

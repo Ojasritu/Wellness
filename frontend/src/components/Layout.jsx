@@ -1,7 +1,17 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
+import Logout from './Logout'
 
 function Layout({ children }) {
+  const [user, setUser] = useState(null)
+
+  useEffect(() => {
+    fetch('/api/profile/', { credentials: 'include' })
+      .then((r) => r.json())
+      .then((data) => setUser(data.username ? data : null))
+      .catch(() => setUser(null))
+  }, [])
+
   return (
     <div>
       <nav className="navbar">
@@ -22,7 +32,14 @@ function Layout({ children }) {
               <option value="hi">HI</option>
             </select>
             <a className="btn btn-ghost" href="https://wa.me/918305569539" target="_blank" rel="noreferrer">WhatsApp</a>
-            <Link to="/login" className="btn">Login</Link>
+            {user ? (
+              <>
+                <Link to="/profile" className="btn">{user.username}</Link>
+                <Logout />
+              </>
+            ) : (
+              <Link to="/login" className="btn">Login</Link>
+            )}
           </div>
         </div>
       </nav>
