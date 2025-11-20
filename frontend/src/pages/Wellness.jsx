@@ -66,10 +66,10 @@ export default function Wellness() {
         {/* Featured Image */}
         <div className="wellness-image-section">
           <img 
-            src="/images/coming-soon-ayurveda.svg"
+            src="/images/coming-soon-ayurveda.png"
             alt="Coming Soon Ancient Ayurveda & Nature"
-            className="wellness-image"
-            style={{width: '100%', maxWidth: '700px', borderRadius: '16px', boxShadow: '0 4px 32px rgba(0,0,0,0.15)'}}
+            className="wellness-image big-coming-soon"
+            style={{width: '100%', maxWidth: '900px', borderRadius: '24px', boxShadow: '0 8px 48px rgba(0,0,0,0.25)', margin: '0 auto', display: 'block'}}
           />
         </div>
 
