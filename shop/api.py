@@ -8,6 +8,15 @@ from .models import (
     Order, Rebooking, Article, FAQ, ContactMessage
 )
 from .models import Profile
+from django.contrib.auth import get_user_model, login
+import json
+import os
+
+from django.views.decorators.csrf import csrf_exempt
+
+# For Google ID token verification
+from google.oauth2 import id_token as google_id_token
+from google.auth.transport import requests as google_requests
 
 
 # ===== SERIALIZERS =====
@@ -253,7 +262,18 @@ class ProfileAPIView(APIView):
         if not user.is_authenticated:
             return Response({'detail': 'Authentication required'}, status=status.HTTP_401_UNAUTHORIZED)
         profile, _ = Profile.objects.get_or_create(user=user)
-        serializer = ProfileSerializer(profile, data=request.data, partial=True, context={'request': request})
+        # Allow updating Profile fields and basic User fields
+        data = request.data.copy()
+        # If user fields are present, update them
+        if 'first_name' in data:
+            request.user.first_name = data.get('first_name')
+        if 'last_name' in data:
+            request.user.last_name = data.get('last_name')
+        if 'email' in data:
+            request.user.email = data.get('email')
+        request.user.save()
+
+        serializer = ProfileSerializer(profile, data=data, partial=True, context={'request': request})
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data)
@@ -289,4 +309,69 @@ class LogoutAPIView(APIView):
 
 urlpatterns += [
     path('logout/', LogoutAPIView.as_view(), name='api-logout'),
+]
+
+
+# ===== Google ID token auth endpoint =====
+class GoogleAuthAPIView(APIView):
+    """Accepts Google ID token (from client-side) and logs in/creates user."""
+
+    @csrf_exempt
+    def post(self, request):
+        try:
+            body = request.data
+            id_token = body.get('id_token') or body.get('credential')
+            if not id_token:
+                return Response({'detail': 'id_token required'}, status=status.HTTP_400_BAD_REQUEST)
+
+            # Verify token
+            client_id = os.getenv('GOOGLE_CLIENT_ID')
+            try:
+                idinfo = google_id_token.verify_oauth2_token(id_token, google_requests.Request(), client_id)
+            except Exception as e:
+                return Response({'detail': 'Invalid token', 'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
+
+            # idinfo contains 'email', 'given_name', 'family_name', 'picture', 'email_verified'
+            email = idinfo.get('email')
+            if not email:
+                return Response({'detail': 'Email not available in token'}, status=status.HTTP_400_BAD_REQUEST)
+
+            User = get_user_model()
+            user, created = User.objects.get_or_create(email=email, defaults={
+                'username': email.split('@')[0],
+                'first_name': idinfo.get('given_name', ''),
+                'last_name': idinfo.get('family_name', ''),
+            })
+
+            # Update user names if changed
+            changed = False
+            if user.first_name != idinfo.get('given_name', ''):
+                user.first_name = idinfo.get('given_name', '')
+                changed = True
+            if user.last_name != idinfo.get('family_name', ''):
+                user.last_name = idinfo.get('family_name', '')
+                changed = True
+            if changed:
+                user.save()
+
+            # Create profile and possibly save avatar URL
+            profile, _ = Profile.objects.get_or_create(user=user)
+            picture = idinfo.get('picture')
+            if picture and not profile.avatar:
+                # Do not download image here; store the remote url in bio as a temporary hint
+                # (downloading/storing would require more work). We'll skip automatic avatar save.
+                pass
+
+            # Log the user in via session
+            login(request, user)
+
+            serializer = ProfileSerializer(profile, context={'request': request})
+            return Response({'created': created, 'profile': serializer.data})
+
+        except Exception as exc:
+            return Response({'detail': 'Error during authentication', 'error': str(exc)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+urlpatterns += [
+    path('auth/google/', GoogleAuthAPIView.as_view(), name='api-auth-google'),
 ]

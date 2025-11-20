@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import './Login.css'
+import { GoogleLogin } from '@react-oauth/google'
 
 const Login = () => {
   const [email, setEmail] = useState('')
@@ -120,16 +121,35 @@ const Login = () => {
 
             <div className="divider">OR</div>
 
-            <button
-              className="google-login"
-              onClick={() => {
-                // Redirect to Django-allauth Google login URL
-                // allauth default endpoint: /accounts/google/login/
-                window.location.href = '/accounts/google/login/';
-              }}
-            >
-              <span>🔐</span> Sign in with Google
-            </button>
+            <div style={{display:'flex',justifyContent:'center'}}>
+              <GoogleLogin
+                onSuccess={async (credentialResponse) => {
+                  // credentialResponse contains credential (id_token)
+                  const id_token = credentialResponse.credential
+                  if (!id_token) return
+                  try {
+                    const res = await fetch('/api/auth/google/', {
+                      method: 'POST',
+                      headers: { 'Content-Type': 'application/json' },
+                      credentials: 'include',
+                      body: JSON.stringify({ id_token }),
+                    })
+                    const data = await res.json()
+                    if (res.ok) {
+                      // reload to pick up session cookie
+                      window.location.reload()
+                    } else {
+                      console.error('Google auth failed', data)
+                      alert('Google sign-in failed')
+                    }
+                  } catch (err) {
+                    console.error(err)
+                    alert('Google sign-in failed')
+                  }
+                }}
+                onError={() => { alert('Google Sign In was unsuccessful') }}
+              />
+            </div>
 
             <div className="signup-link">
               Don't have an account? <a href="/signup">Create one</a>
