@@ -14,6 +14,18 @@ function Profile() {
       .finally(() => setLoading(false))
   }, [])
 
+  useEffect(() => {
+    // Fetch orders and rebookings for history
+    fetch('/api/orders/', { credentials: 'include' })
+      .then((r) => r.json())
+      .then((data) => setProfile((p) => ({...p, orders: data.results || data})))
+      .catch(() => {})
+    fetch('/api/rebookings/', { credentials: 'include' })
+      .then((r) => r.json())
+      .then((data) => setProfile((p) => ({...p, rebookings: data.results || data})))
+      .catch(() => {})
+  }, [])
+
   const handleSave = async () => {
     setSaving(true)
     try {
@@ -44,6 +56,26 @@ function Profile() {
   return (
     <div className="profile-page">
       <h2>Your Profile</h2>
+      {profile.orders && (
+        <div>
+          <h3>Orders</h3>
+          <ul>
+            {profile.orders.map((o) => (
+              <li key={o.id}>{o.order_id || o.id} — {o.final_amount} — {o.status}</li>
+            ))}
+          </ul>
+        </div>
+      )}
+      {profile.rebookings && (
+        <div>
+          <h3>Bookings</h3>
+          <ul>
+            {profile.rebookings.map((r) => (
+              <li key={r.id}>{r.consultation_type} — {r.scheduled_date} — {r.status}</li>
+            ))}
+          </ul>
+        </div>
+      )}
       <div>
         <strong>Username:</strong> {profile.username}
       </div>
