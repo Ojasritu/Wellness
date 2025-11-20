@@ -12,6 +12,8 @@ import Cart from './pages/Cart'
 import Checkout from './pages/Checkout'
 import Blog from './pages/Blog'
 import Profile from './pages/Profile'
+import Orders from './pages/Orders'
+import OrderDetail from './pages/OrderDetail'
 import Wellness from './pages/Wellness'
 import Acharyas from './pages/Acharyas'
 import ComingSoon from './pages/ComingSoon'
@@ -31,6 +33,8 @@ function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<Signup />} />
           <Route path="/profile" element={<Profile />} />
+          <Route path="/orders" element={<Orders />} />
+          <Route path="/orders/:id" element={<OrderDetail />} />
           <Route path="/wellness" element={<Wellness />} />
           <Route path="/acharyas" element={<Acharyas />} />
           <Route path="/coming-soon" element={<ComingSoon />} />
