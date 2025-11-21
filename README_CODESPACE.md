@@ -71,7 +71,48 @@ Yeh file batati hai kaise ek naye collaborator Codespace open karke aage ka kaam
   ./scripts/update_godaddy.sh
   ```
 
-5) Verify locally (optional)
+5) Export / Import workflow (superuser + product images)
+
+Export (from source environment where the desired superuser and product images live):
+
+```bash
+# create exports (includes db.sqlite3, fixtures_all.json, and media.tar.gz if present)
+chmod +x scripts/export_backend.sh
+./scripts/export_backend.sh /tmp/my-exports
+
+# check /tmp/my-exports for db.sqlite3 and media.tar.gz (product images)
+ls -la /tmp/my-exports
+```
+
+Transfer `/tmp/my-exports` securely to the collaborator or push to a private storage.
+
+Import (on the new Codespace where you want exact superuser and product images):
+
+Option A — Full DB replacement (recommended if you want exact replica including superuser):
+
+```bash
+# copy the exported folder into Codespace, e.g. to /workspaces/wellness/exports
+chmod +x scripts/import_backend.sh
+./scripts/import_backend.sh /workspaces/wellness/exports --use-db
+
+# after import, run migrations/collectstatic if needed
+python manage.py migrate
+python manage.py collectstatic --noinput
+```
+
+Option B — Load fixtures + extract media (safer; does not replace DB):
+
+```bash
+./scripts/import_backend.sh /workspaces/wellness/exports
+python manage.py migrate
+python manage.py collectstatic --noinput
+```
+
+Notes:
+- `--use-db` replaces local `db.sqlite3` with exported DB and will bring the superuser and all data exactly as in source. Use only when you intend to overwrite the local DB.
+- `media.tar.gz` contains product images and will be extracted to the repo `media/` folder, so product image URLs will resolve as in source.
+
+6) Verify locally (optional)
 - Run Django dev server (for quick check):
   ```bash
   python manage.py migrate --noinput
