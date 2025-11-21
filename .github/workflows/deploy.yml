@@ -8,9 +8,8 @@ on:
 
 jobs:
   build-and-deploy:
-    runs-on: ubuntu-latest
     steps:
-      - name: Checkout repository
+ name: Deploy (Railway + GoDaddy)
         uses: actions/checkout@v4
 
       - name: Setup Node.js
@@ -81,3 +80,4 @@ jobs:
           RAILWAY_HOST: ${{ env.RAILWAY_HOST }}
         run: |
           ./scripts/update_godaddy.sh
+            ./scripts/update_godaddy.sh
