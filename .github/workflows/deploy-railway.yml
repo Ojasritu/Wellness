@@ -1,0 +1,47 @@
+name: Deploy to Railway
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.12'
+
+      - name: Build frontend and copy into Django static
+        run: |
+          cd frontend
+          npm ci --silent
+          npm run build
+          cd ..
+          bash scripts/build_and_copy_frontend.sh
+
+      - name: Install Railway CLI
+        run: curl -sSL https://railway.app/install.sh | sh
+
+      - name: Login to Railway
+        env:
+          RAILWAY_API_KEY: ${{ secrets.RAILWAY_API_KEY }}
+        run: |
+          railway login --apiKey "$RAILWAY_API_KEY"
+
+      - name: Deploy to Railway (non-interactive)
+        run: |
+          # Deploy current repository to Railway (requires RAILWAY_API_KEY secret)
+          railway up --detach || railway deploy || true
+
+      - name: Show Railway status
+        run: railway status || true
