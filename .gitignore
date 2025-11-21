@@ -28,8 +28,7 @@ db.sqlite3-journal
 media/
 staticfiles/
 
-# Environment variables
-.env
+exports/
 .env.local
 .env.*.local
 
