@@ -21,11 +21,16 @@ Yeh file batati hai kaise ek naye collaborator Codespace open karke aage ka kaam
 - Repository mein `.devcontainer/devcontainer.json` hai. Codespace create karte waqt yeh image use karega (Python 3.11) aur Node 18 feature install karega.
 - Post-create commands automatically run honge: backend deps install, frontend `npm ci`, aur `scripts/*.sh` ko executable banaya jayega.
  - Post-create commands automatically run honge: backend deps install, frontend `npm ci`, aur `scripts/*.sh` ko executable banaya jayega.
- - Dev database ke liye by-default seeds chalenge: ek superuser `tempgpt666` aur do test accounts ban jayenge. Default credentials:
-   - Superuser: `tempgpt666` / `devpass123` (email: `tempgpt666@example.com`)
+ - Dev database ke liye **by-default superuser nahin banaya jayega** (to avoid overriding any existing admin). Seeder ab default mein sirf test users create karega:
    - Test users: `testuser1` / `testpass1`, `testuser2` / `testpass2`
-  
-  Note: yeh defaults development convenience ke liye hain. Agar aap different credentials chahte ho to Codespaces secrets me `DEV_SUPERUSER_USERNAME`, `DEV_SUPERUSER_EMAIL`, `DEV_SUPERUSER_PASSWORD` set kar sakte ho before creating Codespace.
+
+  Agar aap explicitly dev superuser create karna chahte ho to Codespaces secrets mein pehle yeh set karo BEFORE creating the Codespace:
+  - `DEV_CREATE_SUPERUSER` = `1`
+  - `DEV_SUPERUSER_USERNAME` = desired username
+  - `DEV_SUPERUSER_EMAIL` = desired email
+  - `DEV_SUPERUSER_PASSWORD` = desired password
+
+  Seeder script will create the superuser only when `DEV_CREATE_SUPERUSER=1` is present. This prevents accidental overriding of existing admin credentials.
 
 4) Common commands to run inside Codespace (copy-paste)
 - Projekt root par aake:

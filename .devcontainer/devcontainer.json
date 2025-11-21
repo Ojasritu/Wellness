@@ -6,7 +6,7 @@
       "version": "18"
     }
   },
-  "postCreateCommand": "python -m pip install --upgrade pip && pip install -r requirements.txt || true && cd frontend && npm ci || true && cd .. && chmod +x scripts/*.sh || true && python manage.py migrate --noinput || true && DEV_SUPERUSER_USERNAME=tempgpt666 DEV_SUPERUSER_EMAIL=tempgpt666@example.com DEV_SUPERUSER_PASSWORD=devpass123 python scripts/seed_dev_data.py || true",
+  "postCreateCommand": "python -m pip install --upgrade pip && pip install -r requirements.txt || true && cd frontend && npm ci || true && cd .. && chmod +x scripts/*.sh || true && python manage.py migrate --noinput || true && python scripts/seed_dev_data.py || true",
   "forwardPorts": [8000, 5173],
   "customizations": {
     "vscode": {

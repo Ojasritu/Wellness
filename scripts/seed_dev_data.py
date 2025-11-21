@@ -26,13 +26,20 @@ def create_user(username, email, password, is_super=False):
         print(f'Created user: {username}')
 
 if __name__ == '__main__':
-    su_name = os.environ.get('DEV_SUPERUSER_USERNAME', 'tempgpt666')
-    su_email = os.environ.get('DEV_SUPERUSER_EMAIL', 'tempgpt666@example.com')
-    su_pass = os.environ.get('DEV_SUPERUSER_PASSWORD', 'devpass123')
+    # By default we DO NOT create/override a superuser to avoid changing existing credentials.
+    # To explicitly create a dev superuser set the env var DEV_CREATE_SUPERUSER=1 and provide
+    # DEV_SUPERUSER_USERNAME, DEV_SUPERUSER_EMAIL, DEV_SUPERUSER_PASSWORD.
+    create_super = os.environ.get('DEV_CREATE_SUPERUSER', '0') == '1'
 
-    create_user(su_name, su_email, su_pass, is_super=True)
+    if create_super:
+        su_name = os.environ.get('DEV_SUPERUSER_USERNAME', 'tempgpt666')
+        su_email = os.environ.get('DEV_SUPERUSER_EMAIL', 'tempgpt666@example.com')
+        su_pass = os.environ.get('DEV_SUPERUSER_PASSWORD', 'devpass123')
+        create_user(su_name, su_email, su_pass, is_super=True)
+    else:
+        print('Skipping superuser creation (DEV_CREATE_SUPERUSER not set).')
 
-    # Additional test accounts
+    # Additional test accounts (safe to create)
     create_user('testuser1', 'test1@example.com', 'testpass1', is_super=False)
     create_user('testuser2', 'test2@example.com', 'testpass2', is_super=False)
 
